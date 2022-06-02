@@ -7,8 +7,7 @@ const pool = new Pool({
     database: "bancosolar"
 })
 
-// 1. Crear una ruta POST /cancion que reciba los datos correspondientes a una canción y realice a través de una función asíncrona la inserción en la tabla repertorio.
-const insertar = async (datos) => {
+const insertarUsuario = async (datos) => {
     const consulta = {
         text: "INSERT INTO usuarios(nombre, balance) VALUES ($1, $2) RETURNING *",
         values: datos,
@@ -22,8 +21,7 @@ const insertar = async (datos) => {
     }
 }
 
-// 2. Crear una ruta GET /canciones que devuelva un JSON con los registros de la tabla repertorio.
-const consultar = async () => {
+const consultarUsuario = async () => {
     // Paso 2
     try {
         const result = await pool.query("SELECT * FROM usuarios")
@@ -35,9 +33,7 @@ const consultar = async () => {
     }
 }
 
-// 3. Crear una ruta PUT /cancion que reciba los datos de una canción que se desea editar, ejecuta una función asíncrona para hacer la consulta SQL correspondiente y
-// actualice ese registro de la tabla repertorio.
-const editar = async (datos) => {
+const editarUsuario = async (datos) => {
     const consulta = {
         text: `UPDATE usuarios SET nombre = $1, balance = $2 WHERE id = $3 RETURNING *`,
         values: datos,
@@ -51,12 +47,10 @@ const editar = async (datos) => {
     }
 }
 
-// 4. Crear una ruta DELETE /cancion que reciba por queryString el id de una canción y
-// realiza una consulta SQL a través de una función asíncrona para eliminarla de la base de datos.
-const eliminar = async (id) => {
+const eliminarUsuario = async (id) => {
     try {
         const result = await pool.query(
-            `DELETE FROM repertorio WHERE id = '${id}'`
+            `DELETE FROM usuarios WHERE id = '${id}'`
         )
         return result
     } catch (error) {
@@ -65,6 +59,37 @@ const eliminar = async (id) => {
     }
 }
 
+const insertarTransferencia = async (datos) => {
+    
+    const consultaInsertTransferencia = {
+        text: `INSERT INTO transferencias (emisor, receptor, monto, fecha) VALUES ($1, $2, $3, NOW()) RETURNING *`,
+        values: datos
+    }
+
+    const consultaEmisor = {
+        text: `UPDATE usuarios SET balance = balance - $1 WHERE id = $2 RETURNING *`,
+        values: [datos[2], datos[0]]
+    }
+
+    const consultaReceptor = {
+        text: `UPDATE usuarios SET balance = balance + $1 WHERE id = $2 RETURNING *`,
+        values: [datos[1], datos[0]]
+    }
+
+    try {
+        await pool.query('BEGIN')
+        const result = await pool.query(consultaInsertTransferencia)
+        await pool.query(consultaEmisor)
+        await pool.query(consultaReceptor)
+        await pool.query('COMMIT')
+        return result.rows[0]
+    } catch (error) {
+        await pool.query('ROLLBACK')
+        console.log(error)
+        return error
+    }
+}
 
 
-module.exports = { insertar, consultar, editar, eliminar}
+
+module.exports = { insertarUsuario, consultarUsuario, editarUsuario, eliminarUsuario, insertarTransferencia }
