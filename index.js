@@ -2,9 +2,13 @@ const http = require("http")
 const url = require('url')
 const fs = require('fs')
 
-const { editarUsuario, eliminarUsuario, insertarTransferencia, consultarTransferencia } = require("./consultas")
+
 const usuarioPost = require('./rutas/usuarioPost')
 const usuariosGet = require('./rutas/usuariosGet')
+const usuarioPut = require('./rutas/usuarioPut')
+const usuarioDelete = require('./rutas/usuarioDelete')
+const transferenciaPost = require('./rutas/transferenciaPost')
+const transferenciasGet = require('./rutas/transferenciasGet')
 
 http
     .createServer(async (req, res) => {
@@ -24,50 +28,19 @@ http
         }
 
         if (req.url.startsWith("/usuario?") && req.method == "PUT") {
-            let body = ""
-            const { id } = url.parse(req.url, true).query
-
-            req.on("data", (chunk) => {
-                body += chunk
-            })
-
-            req.on("end", async () => {
-                const bodyObject = JSON.parse(body)
-                const datos = [bodyObject.name, bodyObject.balance, id]
-                const respuesta = await editarUsuario(datos)
-                res.writeHead(201, { 'Content-Type': 'application/json' })
-                res.end(JSON.stringify(respuesta))
-            })
+            usuarioPut(req, res, url)
         }
 
         if (req.url.startsWith("/usuario?") && req.method == "DELETE") {
-            const { id } = url.parse(req.url, true).query
-            const respuesta = await eliminarUsuario(id)
-            res.end(JSON.stringify(respuesta))
+            usuarioDelete(req, res, url)
         }
 
         if ((req.url == "/transferencia" && req.method === "POST")) {
-            let body = ""
-            req.on("data", (chunk) => {
-                body += chunk
-            })
-
-            req.on("end", async () => {
-                console.log(body)
-                const bodyObject = JSON.parse(body)
-                const datos = [bodyObject.emisor, bodyObject.receptor, bodyObject.monto]
-
-                const respuesta = await insertarTransferencia(datos)
-
-                res.writeHead(201, { 'Content-Type': 'application/json' })
-                res.end(JSON.stringify(respuesta))
-            })
+            transferenciaPost(req, res)
         }
 
         if (req.url === "/transferencias" && req.method === "GET") {
-            const registros = await consultarTransferencia()
-            res.writeHead(200, { 'Content-Type': 'application/json' })
-            res.end(JSON.stringify(registros))
+            transferenciasGet(res)
         }
     })
     .listen(3000, console.log('Server activo en el puerto 3000'))
