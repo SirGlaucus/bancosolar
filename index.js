@@ -2,7 +2,7 @@ const http = require("http")
 const url = require('url')
 const fs = require('fs')
 
-const { insertarUsuario, consultarUsuario, editarUsuario, eliminarUsuario, insertarTransferencia } = require("./consultas")
+const { insertarUsuario, consultarUsuario, editarUsuario, eliminarUsuario, insertarTransferencia, consultarTransferencia } = require("./consultas")
 
 http
     .createServer(async (req, res) => {
@@ -75,6 +75,12 @@ http
                 res.writeHead(201, { 'Content-Type': 'application/json' })
                 res.end(JSON.stringify(respuesta))
             })
+        }
+
+        if (req.url === "/transferencias" && req.method === "GET") {
+            const registros = await consultarTransferencia()
+            res.writeHead(200, { 'Content-Type': 'application/json' })
+            res.end(JSON.stringify(registros))
         }
     })
     .listen(3000, console.log('Server activo en el puerto 3000'))
