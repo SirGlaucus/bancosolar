@@ -1,20 +1,20 @@
 const { insertarUsuario } = require("../consultas")
 
-const usuarioPOST = (res, req) => {
+const usuarioPost = (res, req) => {
     let body = ""
-            req.on("data", (chunk) => {
-                body += chunk
-            })
+    req.on("data", (chunk) => {
+        body += chunk
+    })
 
-            req.on("end", async () => {
-                const bodyObject = JSON.parse(body)
-                const datos = [bodyObject.nombre, bodyObject.balance]
+    req.on("end", async () => {
+        const bodyObject = JSON.parse(body)
+        const datos = [bodyObject.nombre, bodyObject.balance]
 
-                const respuesta = await insertarUsuario(datos)
+        const respuesta = await insertarUsuario(datos)
 
-                res.writeHead(201, { 'Content-Type': 'application/json' })
-                res.end(JSON.stringify(respuesta))
-            })
+        res.writeHead(201, { 'Content-Type': 'application/json' })
+        res.end(JSON.stringify(respuesta))
+    })
 }
 
-module.exports = usuarioPOST
+module.exports = usuarioPost

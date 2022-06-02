@@ -2,8 +2,9 @@ const http = require("http")
 const url = require('url')
 const fs = require('fs')
 
-const { consultarUsuario, editarUsuario, eliminarUsuario, insertarTransferencia, consultarTransferencia } = require("./consultas")
-const usuarioPOST = require('./rutas/usuarioPOST')
+const { editarUsuario, eliminarUsuario, insertarTransferencia, consultarTransferencia } = require("./consultas")
+const usuarioPost = require('./rutas/usuarioPost')
+const usuariosGet = require('./rutas/usuariosGet')
 
 http
     .createServer(async (req, res) => {
@@ -15,13 +16,11 @@ http
         }
 
         if ((req.url == "/usuario" && req.method === "POST")) {
-            usuarioPOST(res, req)
+            usuarioPost(res, req)
         }
 
         if (req.url == "/usuarios" && req.method === "GET") {
-            const registros = await consultarUsuario()
-            res.writeHead(200, { 'Content-Type': 'application/json' })
-            res.end(JSON.stringify(registros))
+            usuariosGet(res)
         }
 
         if (req.url.startsWith("/usuario?") && req.method == "PUT") {
