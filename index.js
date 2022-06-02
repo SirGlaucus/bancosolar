@@ -2,7 +2,8 @@ const http = require("http")
 const url = require('url')
 const fs = require('fs')
 
-const { insertarUsuario, consultarUsuario, editarUsuario, eliminarUsuario, insertarTransferencia, consultarTransferencia } = require("./consultas")
+const { consultarUsuario, editarUsuario, eliminarUsuario, insertarTransferencia, consultarTransferencia } = require("./consultas")
+const usuarioPOST = require('./rutas/usuarioPOST')
 
 http
     .createServer(async (req, res) => {
@@ -14,20 +15,7 @@ http
         }
 
         if ((req.url == "/usuario" && req.method === "POST")) {
-            let body = ""
-            req.on("data", (chunk) => {
-                body += chunk
-            })
-
-            req.on("end", async () => {
-                const bodyObject = JSON.parse(body)
-                const datos = [bodyObject.nombre, bodyObject.balance]
-
-                const respuesta = await insertarUsuario(datos)
-
-                res.writeHead(201, { 'Content-Type': 'application/json' })
-                res.end(JSON.stringify(respuesta))
-            })
+            usuarioPOST(res, req)
         }
 
         if (req.url == "/usuarios" && req.method === "GET") {
