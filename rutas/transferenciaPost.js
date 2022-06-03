@@ -18,7 +18,7 @@ const transferenciaPost = (req, res) => {
         })
     } catch (error) {
         mostrarErrores(error)
-        res.writeHead(404, { 'Content-Type': 'application/json' })
+        res.writeHead(500, { 'Content-Type': 'application/json' })
         res.end(JSON.stringify({ message: 'Not found' }))
     }
 }

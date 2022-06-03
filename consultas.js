@@ -24,7 +24,7 @@ const insertarUsuario = async (datos) => {
         return result.rows[0]
     } catch (error) {
         mostrarErrores(error)
-        return error
+        throw error
     }
 }
 
@@ -34,7 +34,7 @@ const consultarUsuario = async () => {
         return result.rows
     } catch (error) {
         mostrarErrores(error)
-        return error
+        throw error
     }
 }
 
@@ -48,7 +48,7 @@ const editarUsuario = async (datos) => {
         return result
     } catch (error) {
         mostrarErrores(error)
-        return error
+        throw error
     }
 }
 
@@ -60,7 +60,7 @@ const eliminarUsuario = async (id) => {
         return result
     } catch (error) {
         mostrarErrores(error)
-        return error
+        throw error
     }
 }
 
@@ -82,16 +82,20 @@ const insertarTransferencia = async (datos) => {
     }
 
     try {
-        await pool.query('BEGIN')
-        const result = await pool.query(consultaInsertTransferencia)
-        await pool.query(consultaEmisor)
-        await pool.query(consultaReceptor)
-        await pool.query('COMMIT')
-        return result.rows[0]
+        if (datos[0] === datos[1]) {
+            console.error('Por favor ingresar un receptor distinto')
+        } else {
+            await pool.query('BEGIN')
+            const result = await pool.query(consultaInsertTransferencia)
+            await pool.query(consultaEmisor)
+            await pool.query(consultaReceptor)
+            await pool.query('COMMIT')
+            return result.rows[0]
+        }
     } catch (error) {
         await pool.query("ROLLBACK")
         mostrarErrores(error)
-        return error
+        throw error
     }
 }
 
@@ -126,9 +130,7 @@ const consultarTransferencia = async () => {
         return resultadoConNombres
     } catch (error) {
         mostrarErrores(error)
-        res.writeHead(404, { 'Content-Type': 'application/json' })
-        res.end(JSON.stringify({ message: 'Error encontrando las transferencias' }))
-        return error
+        throw error
     }
 }
 

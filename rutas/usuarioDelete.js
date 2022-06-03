@@ -8,7 +8,7 @@ const usuarioDelete = async (req, res, url) => {
         res.end(JSON.stringify(respuesta))
     } catch (error) {
         mostrarErrores(error)
-        res.writeHead(404, { 'Content-Type': 'application/json' })
+        res.writeHead(500, { 'Content-Type': 'application/json' })
         res.end(JSON.stringify({ message: 'Not found' }))
     }
 }
