@@ -89,7 +89,7 @@ const insertarTransferencia = async (datos) => {
         await pool.query('COMMIT')
         return result.rows[0]
     } catch (error) {
-        await client.query("ROLLBACK")
+        await pool.query("ROLLBACK")
         mostrarErrores(error)
         return error
     }
@@ -126,9 +126,11 @@ const consultarTransferencia = async () => {
         return resultadoConNombres
     } catch (error) {
         mostrarErrores(error)
+        res.writeHead(404, { 'Content-Type': 'application/json' })
+        res.end(JSON.stringify({ message: 'Error encontrando las transferencias' }))
         return error
     }
 }
 
 
-module.exports = { insertarUsuario, consultarUsuario, editarUsuario, eliminarUsuario, insertarTransferencia, consultarTransferencia }
+module.exports = { insertarUsuario, consultarUsuario, editarUsuario, eliminarUsuario, insertarTransferencia, consultarTransferencia, mostrarErrores }

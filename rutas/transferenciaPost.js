@@ -1,20 +1,26 @@
-const { insertarTransferencia } = require("../consultas")
+const { insertarTransferencia, mostrarErrores } = require("../consultas")
 
-const transferenciaPost = (req, res) =>{
-    let body = ""
-            req.on("data", (chunk) => {
-                body += chunk
-            })
+const transferenciaPost = (req, res) => {
+    try {
+        let body = ""
+        req.on("data", (chunk) => {
+            body += chunk
+        })
 
-            req.on("end", async () => {
-                const bodyObject = JSON.parse(body)
-                const datos = [bodyObject.emisor, bodyObject.receptor, bodyObject.monto]
+        req.on("end", async () => {
+            const bodyObject = JSON.parse(body)
+            const datos = [bodyObject.emisor, bodyObject.receptor, bodyObject.monto]
 
-                const respuesta = await insertarTransferencia(datos)
+            const respuesta = await insertarTransferencia(datos)
 
-                res.writeHead(201, { 'Content-Type': 'application/json' })
-                res.end(JSON.stringify(respuesta))
-            })
+            res.writeHead(201, { 'Content-Type': 'application/json' })
+            res.end(JSON.stringify(respuesta))
+        })
+    } catch (error) {
+        mostrarErrores(error)
+        res.writeHead(404, { 'Content-Type': 'application/json' })
+        res.end(JSON.stringify({ message: 'Not found' }))
+    }
 }
 
 
