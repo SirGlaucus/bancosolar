@@ -116,14 +116,11 @@ const consultarTransferencia = async () => {
                 if (usuario.id === transferencia.emisor) {
                     emisor = usuario.nombre
                 }
-            })
-
-            usuariosObjetos.forEach((usuario) => {
+                
                 if (usuario.id === transferencia.receptor) {
                     receptor = usuario.nombre
                 }
             })
-
             return [transferencia.id, emisor, receptor, transferencia.monto]
         })
 
