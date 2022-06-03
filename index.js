@@ -13,29 +13,29 @@ const transferenciasGet = require('./rutas/transferenciasGet')
 http
     .createServer(async (req, res) => {
         // Lectural del archivo HTML para el servidor
-        if (req.url == "/" && req.method === "GET") {
+        if (req.url === "/" && req.method === "GET") {
             res.setHeader("content-type", "text/html")
             const html = fs.readFileSync("index.html", "utf8")
             res.end(html)
         }
 
-        if ((req.url == "/usuario" && req.method === "POST")) {
+        if ((req.url === "/usuario" && req.method === "POST")) {
             usuarioPost(res, req)
         }
 
-        if (req.url == "/usuarios" && req.method === "GET") {
+        if (req.url === "/usuarios" && req.method === "GET") {
             usuariosGet(res)
         }
 
-        if (req.url.startsWith("/usuario?") && req.method == "PUT") {
+        if (req.url.startsWith("/usuario?") && req.method === "PUT") {
             usuarioPut(req, res, url)
         }
 
-        if (req.url.startsWith("/usuario?") && req.method == "DELETE") {
+        if (req.url.startsWith("/usuario?") && req.method === "DELETE") {
             usuarioDelete(req, res, url)
         }
 
-        if ((req.url == "/transferencia" && req.method === "POST")) {
+        if ((req.url === "/transferencia" && req.method === "POST")) {
             transferenciaPost(req, res)
         }
 
