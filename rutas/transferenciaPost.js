@@ -8,7 +8,6 @@ const transferenciaPost = (req, res) => {
         })
 
         req.on("end", async () => {
-            console.log(body)
             const bodyObject = JSON.parse(body)
             const datos = [bodyObject.emisor, bodyObject.receptor, bodyObject.monto]
 
